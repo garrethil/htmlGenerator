@@ -58,10 +58,14 @@
   </form>
 
   <script>
+    const BASE_URL = window.location.origin.includes('localhost')
+  ? 'http://localhost:3000'
+  : 'https://htmlgenerator.onrender.com';
+
     document.getElementById('signatureForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
-      const response = await fetch('/generate', {
+      const response = await fetch(`${BASE_URL}/generate`, {
         method: 'POST',
         body: JSON.stringify(Object.fromEntries(formData)),
         headers: { 'Content-Type': 'application/json' }

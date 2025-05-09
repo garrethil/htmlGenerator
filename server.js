@@ -11,7 +11,7 @@ app.post('/generate', (req, res) => {
 <table cellpadding="0" cellspacing="0" border="0" width="400" style="font-family: Arial, sans-serif; font-size: 14px; background-color: #199aca ; color: #333; ">
   <tr>
     <td style="padding-right: 10px;">
-      <img src="https://img.freepik.com/free-psd/gradient-abstract-logo_23-2150689652.jpg?semt=ais_hybrid&w=740" alt="Your Name" width="80" style="border-radius: 50%; margin-left: 50; margin-top: 20;" />
+      <img src="https://img.freepik.com/free-psd/gradient-abstract-logo_23-2150689652.jpg?semt=ais_hybrid&w=740" alt="Your Name" width="80" style="border-radius: 50%; margin-left: 50; margin-top: 20; margin-bottom: 20;" />
     </td>
     <td>
       <strong style="font-size: 16px; color: #000;">${name}</strong><br />
