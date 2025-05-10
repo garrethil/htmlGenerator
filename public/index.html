@@ -1,13 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>HTML Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f2f2f2;
       padding: 2rem;
+    }
+    nav {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    nav button {
+      margin: 0 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    nav button:hover {
+  text-decoration: underline;
+    }
+    nav button.active {
+  background-color: #0056b3;
+  text-decoration: underline;
+}
+    .form-section {
+      display: none;
+    }
+    .form-section.active {
+      display: block;
     }
     form {
       background-color: #fff;
@@ -31,7 +58,7 @@
       border-radius: 4px;
       box-sizing: border-box;
     }
-    button {
+    button[type="submit"] {
       width: 100%;
       padding: 0.75rem;
       background-color: #007bff;
@@ -41,43 +68,85 @@
       font-size: 1rem;
       cursor: pointer;
     }
-    button:hover {
+    button[type="submit"]:hover {
       background-color: #0056b3;
     }
   </style>
 </head>
 <body>
-  <form id="signatureForm">
-    <label for="name">Name:</label>
-    <input type="text" name="name" id="name" required>
+  <nav>
+    <button onclick="showForm('form1')">Email Signature</button>
+    <button onclick="showForm('form2')">Customer Message</button>
+  </nav>
 
-    <label for="phone">Phone Number:</label>
-    <input type="tel" name="phone" id="phone" placeholder="123-456-7890" pattern="[0-9\-]+" required>
+  <div id="form1" class="form-section active">
+    <form data-template="signature" class="templateForm">
+      <label for="name1">Name:</label>
+      <input type="text" name="name" id="name1" required>
 
-    <button type="submit">Generate HTML</button>
-  </form>
+      <label for="phone1">Phone Number:</label>
+      <input type="tel" name="phone" id="phone1" placeholder="123-456-7890" pattern="[0-9\-]+" required>
+
+      <button type="submit">Generate HTML</button>
+    </form>
+  </div>
+
+  <div id="form2" class="form-section">
+    <form data-template="message" class="templateForm">
+      <label for="email">Customer Email:</label>
+      <input type="email" name="email" id="email" required>
+
+      <label for="message">Message:</label>
+      <input type="text" name="message" id="message" required>
+
+      <button type="submit">Generate HTML</button>
+    </form>
+  </div>
 
   <script>
     const BASE_URL = window.location.origin.includes('localhost')
-  ? 'http://localhost:3000'
-  : 'https://htmlgenerator.onrender.com';
+      ? 'http://localhost:3000'
+      : 'https://htmlgenerator.onrender.com';
 
-    document.getElementById('signatureForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const response = await fetch(`${BASE_URL}/generate`, {
-        method: 'POST',
-        body: JSON.stringify(Object.fromEntries(formData)),
-        headers: { 'Content-Type': 'application/json' }
+    document.querySelectorAll('.templateForm').forEach(form => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const template = form.dataset.template;
+        const formData = new FormData(form);
+
+        const response = await fetch(`${BASE_URL}/generate/${template}`, {
+          method: 'POST',
+          body: JSON.stringify(Object.fromEntries(formData)),
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${template}.html`;
+        a.click();
+        window.URL.revokeObjectURL(url);
       });
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'new.html';
-      a.click();
-      window.URL.revokeObjectURL(url);
     });
+
+   function showForm(id) {
+  // Show the selected form
+  document.querySelectorAll('.form-section').forEach(div => {
+    div.classList.remove('active');
+  });
+  document.getElementById(id).classList.add('active');
+
+  // Update active class on buttons
+  document.querySelectorAll('nav button').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  // Find the correct button and activate it
+  const buttonIndex = id === 'form1' ? 0 : 1;
+  document.querySelectorAll('nav button')[buttonIndex].classList.add('active');
+}
+
   </script>
 </body>
 </html>
